@@ -15,8 +15,7 @@ def main(ip_address):
             if ret:
                 print(" YOU GOT THIS ")
                 print(frame.shape)
-                # TODO: Do something with the frame here
-
+                
             else:
                 pass
 
