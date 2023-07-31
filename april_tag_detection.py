@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 
 
-def detect_tag(video, cameraMatrix = numpy.array([ 1060.71, 0, 960, 0, 1060.71, 540, 0, 0, 1]).reshape((3,3))):
+def detect_tag(frame, cameraMatrix = numpy.array([ 1060.71, 0, 960, 0, 1060.71, 540, 0, 0, 1]).reshape((3,3))):
 
     '''fps = int(video.get(cv2.CAP_PROP_FPS))
     width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -15,7 +15,6 @@ def detect_tag(video, cameraMatrix = numpy.array([ 1060.71, 0, 960, 0, 1060.71, 
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
     output_video = cv2.VideoWriter(output_file, fourcc, 30, (width, height))'''
 
-    ret, frame = video.read()
     camera_params = ( cameraMatrix[0,0], cameraMatrix[1,1], cameraMatrix[0,2], cameraMatrix[1,2] )
     at_detector = Detector(families='tag36h11',
                         nthreads=1,
