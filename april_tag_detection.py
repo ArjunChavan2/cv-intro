@@ -1,8 +1,21 @@
+import cv2
 from dt_apriltags import Detector
 import numpy
-import cv2
-def detect_tag(img):
-    cameraMatrix = numpy.array([ 1060.71, 0, 960, 0, 1060.71, 540, 0, 0, 1]).reshape((3,3))
+import matplotlib.pyplot as plt
+
+
+
+def detect_tag(video, cameraMatrix = numpy.array([ 1060.71, 0, 960, 0, 1060.71, 540, 0, 0, 1]).reshape((3,3))):
+
+    '''fps = int(video.get(cv2.CAP_PROP_FPS))
+    width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+    output_file = 'april_video.avi'
+    fourcc = cv2.VideoWriter_fourcc(*'XVID')
+    output_video = cv2.VideoWriter(output_file, fourcc, 30, (width, height))'''
+
+    ret, frame = video.read()
     camera_params = ( cameraMatrix[0,0], cameraMatrix[1,1], cameraMatrix[0,2], cameraMatrix[1,2] )
     at_detector = Detector(families='tag36h11',
                         nthreads=1,
@@ -11,13 +24,21 @@ def detect_tag(img):
                         refine_edges=1,
                         decode_sharpening=0.25,
                         debug=0)
-    l = []
+
+    img = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     color_img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
+    cv2.line(color_img,(960,0),(960,1080),(0,255,0),5)
+    cv2.line(color_img,(0,540),(2000,540),(0,255,0),5)
+    #plt.imshow(frame)
     tags = at_detector.detect(img, True, camera_params, tag_size = 0.1)
     for tag in tags:
         for idx in range(len(tag.corners)):
             cv2.line(color_img, tuple(tag.corners[idx - 1, :].astype(int)), tuple(tag.corners[idx, :].astype(int)), (0, 255, 0))
-            cv2.circle(color_img, (int(tag.center[0].item()),int(tag.center[1].item())), 50, (0, 0, 255), 2)
-        l.append((tag.pose_t, tag.pose_R))
-    return l
-    
+        plt.imshow(color_img)
+        #print(f'{tag.pose_t} \n\n\n\n {tag.pose_R}')
+        pos = tag.center
+        #heading = tag.center
+    #output_video.write(processed_frame)
+    return pos
+    #video.release()
+    #output_video.release()
